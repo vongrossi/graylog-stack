@@ -1,11 +1,11 @@
 version: '3'
 services:
-  my-mongo:
+  mongo:
     image: "mongo:3"
     restart: always
     volumes:
       - ./:/graylog/data/db
-  my-elasticsearch:
+  elasticsearch:
     image: "elasticsearch:5.6"
     volumes:
       -  ./:/usr/share/elasticsearch/data
@@ -30,6 +30,12 @@ services:
     ports:
       - "9200:9200"
     restart: always
+  kibana:
+    image: "kibana:5.6"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
   graylog:
     image: "graylog/graylog:2.4"
     volumes:
@@ -42,8 +48,8 @@ services:
       GRAYLOG_WEB_LISTEN_URI: http://0.0.0.0:9000/
       GRAYLOG_WEB_ENDPOINT_URI: http://127.0.0.1:9000/api
     links:
-      - my-mongo:mongo
-      - my-elasticsearch:elasticsearch
+      - mongo:mongo
+      - elasticsearch:elasticsearch
     ports:
       - "9000:9000"
       - "12201:12201/udp"
